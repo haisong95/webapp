@@ -1,39 +1,49 @@
 <h1>BlackJack Game!</h1>
 
-<p>Welcome <%= session[:player_name]%></p>
+<p>Welcome <%= session[:player_name]%>.</p>
+
+<% if @play_again %>
+	<p>
+		<strong>Play again?</strong>
+		<a href="/game" class = "btn btn-primary"> Yes </a>
+		<a href="/over" class = "btn btn-primary"> no </a>
+	</p>
+<% end %>
+
 
 <div class="well">
-<h4>dealer cards:</h4>
-<%session[:dealer].each do |card| %>
+	<h4>dealer cards:</h4>
+	<%session[:dealer].each_with_index do |card, i| %>
+		<% if session[:turn] != "dealer" && i == 0 %>
+			<img src= "images/cards/cover.jpg">
+		<% else %>
+			<%=card_image(card)%>
+		<%end%>
+	<%end%>
 
-<%=card_image(card)%>
 
-<%end%>
-
-<%if @show_dealer_button %>
-  <form action='/game/dealer/hit' method='post'>
-  	<input type='submit' class='btn btn-primary' value='Click to see Dealer Card!'>
-  </form>	
-  	<%end%>
-
+	<%if @show_dealer_button %>
+		<p>
+			<h5>Dealer has <%= calculate_total(session[:dealer])%></h5>
+	  	<form action='/game/dealer/hit' method='post'>
+	  		<input type='submit' class='btn btn-primary' value='Click to see Dealer Card!'>
+	    </form>	
+	  </p>
+	<%end%>
 </div>
 
 
 
 <br/>
 <div class="well">
-<h4>player cards:</h4>
-<%session[:player].each do |card| %>
-
-<%=card_image(card)%>
-
-<%end%>
-
+	<h4>player cards:</h4>
+	<%session[:player].each do |card| %>
+		<%=card_image(card)%>
+	<%end%>
 </div>
 
-
-What would you like to do?
 <p>
+What would you like to do?
 <%= session[:player_name] %> has <%= calculate_total(session[:player]) %>
 <% if @show_button %>
 	<form id="hit_form" action="/game/player/hit" method= 'post'>
@@ -43,5 +53,4 @@ What would you like to do?
 		<input type="submit" class="btn btn-success" value="Stay"/>
 	</form>
 <% end %>
-
 </p>
