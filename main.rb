@@ -3,24 +3,23 @@ require 'sinatra'
   
 set :sessions, true
 
-
 helpers do
-def calculate_total(cards)
-  face_value = cards.map {|card| card[1]}
-    
-    total = 0
-    face_value.each do |val|
-      if val == "A"
-        total += 11
-      else
-        total += (val.to_i == 0 ? 10 : val.to_i)
+  def calculate_total(cards)
+    face_value = cards.map {|card| card[1]}
+      
+      total = 0
+      face_value.each do |val|
+        if val == "A"
+          total += 11
+        else
+          total += (val.to_i == 0 ? 10 : val.to_i)
+        end
       end
-    end
-    
-    face_value.select{|val| val == 'A'}.count.times do
-      break if total <= 21
-      total -= 10
-    end
+      
+      face_value.select{|val| val == 'A'}.count.times do
+        break if total <= 21
+        total -= 10
+      end
     total
   end
 
