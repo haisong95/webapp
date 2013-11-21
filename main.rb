@@ -49,6 +49,8 @@ helpers do
     @play_again = true
     @show_button = false
     @show_dealer_button = false
+    session[:player_pot] = session[:player_pot] + session[:player_bet]
+
   end
 
   def lose(msg)
@@ -56,6 +58,11 @@ helpers do
     @play_again = true
     @show_button = false
     @show_dealer_button = false
+    session[:player_pot] = session[:player_pot] - session[:player_bet]
+    if session[:player_pot] == 0
+      @play_again = false
+      @error = "Sorry, You lose all money,click new game!"
+    end
   end
 
   def tie(msg)
@@ -80,6 +87,7 @@ get '/' do
 end
 
 get '/new_player' do
+  session[:player_pot] = 500
   erb :new_player
 end 
 
@@ -88,13 +96,35 @@ post '/new_player'do
     @error = "Name is required!"
     halt erb(:new_player)
   end
-  
   session[:player_name]=params[:player_name]
+  redirect '/bet'
+end
+
+get '/bet' do
+  erb :bet  
+end
+
+post '/bet' do
+  bet_single = params[:bet_amount].to_i
+  if bet_single == 0 || bet_single.nil?
+    @error = "Sorry, you must enter a number"
+    halt erb(:bet)
+  elsif bet_single > session[:player_pot]
+    @error = "Sorry, you don't have enough money!"
+    halt erb(:bet)
+  elsif session[:player_pot] - params[:bet_amount].to_i == 0
+    redirect '/betall'
+  else session[:player_bet] = params[:bet_amount].to_i
+    @success = "You bet $#{bet_single}"
+  end
   redirect '/game'
 end
 
-get '/game' do
+get '/betall' do
+  erb :betall
+end
 
+get '/game' do
 session[:turn] = session[:player_name]
 
 suit = ['H','D','S','C']
@@ -146,9 +176,8 @@ get '/game/dealer' do
     else
       @show_dealer_button = true 
     end
-
-     erb :game
-  end
+  erb :game
+end
 
 post '/game/dealer/hit' do
   session[:dealer] << session[:deck].pop

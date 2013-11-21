@@ -5,7 +5,7 @@
 <% if @play_again %>
   <p>
     <strong>Play again?</strong>
-    <a href="/game" class = "btn btn-primary"> Yes </a>
+    <a href="/bet" class = "btn btn-primary"> Yes </a>
     <a href="/over" class = "btn btn-primary"> no </a>
   </p>
 <% end %>
@@ -15,7 +15,7 @@
   <h4>dealer cards:</h4>
   <%session[:dealer].each_with_index do |card, i| %>
     <% if session[:turn] != "dealer" && i == 0 %>
-      <img src= "images/cards/cover.jpg">
+      <img src= "/images/cards/cover.jpg">
     <% else %>
       <%=card_image(card)%>
     <%end%>
@@ -35,7 +35,7 @@
 
 
 <br/>
-<div class="well">
+<div class="well" id='player_area'>
   <h4>player cards:</h4>
   <%session[:player].each do |card| %>
     <%=card_image(card)%>
