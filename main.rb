@@ -101,6 +101,7 @@ post '/new_player'do
 end
 
 get '/bet' do
+  session[:player_bet] = nil
   erb :bet  
 end
 
@@ -113,6 +114,7 @@ post '/bet' do
     @error = "Sorry, you don't have enough money!"
     halt erb(:bet)
   elsif session[:player_pot] - params[:bet_amount].to_i == 0
+    session[:player_bet] = params[:bet_amount].to_i
     redirect '/betall'
   else session[:player_bet] = params[:bet_amount].to_i
     @success = "You bet $#{bet_single}"
